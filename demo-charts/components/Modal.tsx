@@ -101,8 +101,7 @@ export const Modal: React.FC<ModalProps> = ({ data, chartTitle, chartType, onClo
               backgroundColor: '#f3f4f6',
               padding: '8px',
               borderRadius: '4px',
-              border: '1px solid #d1d5db',
-              marginTop: '20px'
+              border: '1px solid #d1d5db'
             }}>
               ID: {data.id}
             </div>
