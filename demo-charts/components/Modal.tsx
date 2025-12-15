@@ -1,110 +1,110 @@
 "use client";
 
-// Import React and the useState hook for component state management
-// React - core React library
-// useState - React hook for managing component state
+// Импорт React и хука useState для управления состоянием компонента
+// React - основная библиотека React
+// useState - хук React для управления состоянием компонента
 import React, { useState } from 'react';
 
-// Import TypeScript types for type safety
-// ChartDataPoint - interface defining the structure of a data point
-// ChartType - union type for supported chart types
+// Импорт типов TypeScript для обеспечения безопасности типов
+// ChartDataPoint - интерфейс, определяющий структуру точки данных
+// ChartType - объединенный тип для поддерживаемых типов диаграмм
 import { ChartDataPoint, ChartType } from '../types';
 
-// Import utility function for number formatting
-// formatNumber - formats numbers with locale-specific separators
+// Импорт утилиты для форматирования чисел
+// formatNumber - форматирует числа с разделителями по локали
 import { formatNumber } from '../lib/transformData';
 
 /**
- * Interface defining the props for the Modal component
- * This ensures type safety for component inputs
+ * Интерфейс, определяющий свойства компонента Modal
+ * Это обеспечивает безопасность типов для входных данных компонента
  */
 interface ModalProps {
-  /** Data point to display in the modal */
+  /** Точка данных для отображения в модальном окне */
   data: ChartDataPoint;
-  /** Title of the chart that triggered the modal */
+  /** Заголовок диаграммы, которая вызвала модальное окно */
   chartTitle: string;
-  /** Type of chart that triggered the modal */
+  /** Тип диаграммы, которая вызвала модальное окно */
   chartType: ChartType;
-  /** Callback function to handle modal close */
+  /** Функция обратного вызова для закрытия модального окна */
   onClose: () => void;
 }
 
 /**
- * Modal Component - Detailed information display for data points
+ * Компонент Modal - Подробное отображение информации о точках данных
  * 
- * This component displays detailed information about a selected
- * data point in a modal overlay. It provides contextual information
- * about the data point within the chart it originated from.
+ * Этот компонент отображает подробную информацию о выбранной
+ * точке данных в модальном окне. Он предоставляет контекстную информацию
+ * о точке данных в рамках диаграммы, из которой она была выбрана.
  * 
- * Key features:
- * - Overlay background that closes modal when clicked
- * - Detailed data point information display
- * - Contextual chart information
- * - Responsive design with mobile support
- * - Keyboard accessibility (ESC to close)
- * - Smooth entrance animations
+ * Основные функции:
+ * - Фоновое перекрытие, которое закрывает модальное окно при клике
+ * - Подробное отображение информации о точке данных
+ * - Контекстная информация о диаграмме
+ * - Респонсивный дизайн с поддержкой мобильных устройств
+ * - Доступность с клавиатуры (ESC для закрытия)
+ * - Плавные анимации появления
  * 
- * Technical implementation:
- * - Uses React state hooks for local state management
- * - Implements event delegation for efficient handling
- * - Provides accessibility features for screen readers
- * - Uses CSS classes for consistent styling
- * - Implements proper cleanup with useEffect (not shown here)
+ * Техническая реализация:
+ * - Использует хуки состояния React для локального управления состоянием
+ * - Реализует делегирование событий для эффективной обработки
+ * - Обеспечивает функции доступности для программ чтения с экрана
+ * - Использует классы CSS для согласованного стиля
+ * - Реализует надлежащую очистку с помощью useEffect (не показано здесь)
  * 
- * @param data - Selected data point to display
- * @param chartTitle - Title of the source chart
- * @param chartType - Type of the source chart
- * @param onClose - Callback to close the modal
+ * @param data - Выбранная точка данных для отображения
+ * @param chartTitle - Заголовок исходной диаграммы
+ * @param chartType - Тип исходной диаграммы
+ * @param onClose - Обратный вызов для закрытия модального окна
  */
 const Modal: React.FC<ModalProps> = ({ data, chartTitle, chartType, onClose }) => {
-  // State for controlling modal visibility animation
-  // isVisible - flag indicating if modal is fully visible
-  // setIsVisible - function to update visibility state
+  // Состояние для управления анимацией видимости модального окна
+  // isVisible - флаг, указывающий, полностью ли видно модальное окно
+  // setIsVisible - функция для обновления состояния видимости
   const [isVisible, setIsVisible] = useState(false);
 
   /**
-   * Handle click events on the modal overlay
+   * Обработчик кликов по перекрытию модального окна
    * 
-   * This function closes the modal when user clicks outside
-   * the content area (on the semi-transparent overlay).
+   * Эта функция закрывает модальное окно, когда пользователь кликает вне
+   * области содержимого (по полупрозрачному перекрытию).
    * 
-   * @param e - Click event object
+   * @param e - Объект события клика
    */
   const handleOverlayClick = (e: React.MouseEvent) => {
-    // Check if click occurred on the overlay (not content)
+    // Проверяем, произошел ли клик по перекрытию (а не по содержимому)
     if (e.target === e.currentTarget) {
-      // Call the close callback
+      // Вызываем обратный вызов закрытия
       onClose();
     }
   };
 
   /**
-   * Handle keyboard events for modal interaction
+   * Обработчик событий клавиатуры для взаимодействия с модальным окном
    * 
-   * This function enables keyboard navigation by closing
-   * the modal when user presses the Escape key.
+   * Эта функция включает навигацию с клавиатуры, закрывая
+   * модальное окно при нажатии клавиши Escape.
    * 
-   * @param e - Keyboard event object
+   * @param e - Объект события клавиатуры
    */
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    // Check if Escape key was pressed
+    // Проверяем, была ли нажата клавиша Escape
     if (e.key === 'Escape') {
-      // Call the close callback
+      // Вызываем обратный вызов закрытия
       onClose();
     }
   };
 
   /**
-   * Get descriptive text for the chart type
+   * Получение описательного текста для типа диаграммы
    * 
-   * This function returns a human-readable description
-   * of the chart type for better user understanding.
+   * Эта функция возвращает человекочитаемое описание
+   * типа диаграммы для лучшего понимания пользователем.
    * 
-   * @param type - Chart type to describe
-   * @returns Human-readable description of the chart type
+   * @param type - Тип диаграммы для описания
+   * @returns Человекочитаемое описание типа диаграммы
    */
   const getChartTypeDescription = (type: ChartType): string => {
-    // Map chart types to descriptive text
+    // Сопоставление типов диаграмм с описательным текстом
     switch (type) {
       case 'bar': return 'столбчатой диаграммы';
       case 'line': return 'линейной диаграммы';
@@ -113,84 +113,84 @@ const Modal: React.FC<ModalProps> = ({ data, chartTitle, chartType, onClose }) =
     }
   };
 
-  // Trigger entrance animation after component mount
+  // Запуск анимации появления после монтирования компонента
   React.useEffect(() => {
-    // Set visibility to true after a short delay
+    // Устанавливаем видимость в true после небольшой задержки
     const timer = setTimeout(() => setIsVisible(true), 10);
-    // Cleanup timer on component unmount
+    // Очистка таймера при размонтировании компонента
     return () => clearTimeout(timer);
   }, []);
 
-  // Render the modal component
+  // Рендеринг компонента модального окна
   return (
-    // Overlay container with semi-transparent background
+    // Контейнер перекрытия с полупрозрачным фоном
     <div 
-      // Click handler for overlay interactions
+      // Обработчик кликов для взаимодействия с перекрытием
       onClick={handleOverlayClick}
-      // Keyboard handler for ESC key
+      // Обработчик событий клавиатуры для клавиши ESC
       onKeyDown={handleKeyDown}
-      // Enable keyboard event handling
+      // Включение обработки событий клавиатуры
       tabIndex={-1}
-      // CSS classes for overlay styling and transitions
+      // Классы CSS для стилизации перекрытия и переходов
       className={`fixed inset-0 z-50 flex items-center justify-center p-4 bg-black bg-opacity-50 backdrop-blur-sm transition-opacity duration-300 ${
-        // Conditional class for opacity transition
+        // Условный класс для перехода прозрачности
         isVisible ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      {/* Modal content container with card-like styling */}
+      {/* Контейнер содержимого модального окна со стилем карточки */}
       <div 
-        // CSS classes for content styling and transitions
+        // Классы CSS для стилизации содержимого и переходов
         className={`bg-white dark:bg-gray-900 rounded-xl shadow-2xl max-w-md w-full transform transition-all duration-300 ${
-          // Conditional classes for entrance animation
+          // Условные классы для анимации появления
           isVisible ? 'scale-100 translate-y-0' : 'scale-95 translate-y-4'
         }`}
       >
-        {/* Modal header with title and close button */}
+        {/* Заголовок модального окна с заголовком и кнопкой закрытия */}
         <div className="flex items-center justify-between p-6 border-b border-gray-200 dark:border-gray-700">
-          {/* Header title with descriptive text */}
+          {/* Заголовок с описательным текстом */}
           <h3 className="text-lg font-semibold text-gray-900 dark:text-white">
-            {/* Dynamic title with chart context */}
+            {/* Динамический заголовок с контекстом диаграммы */}
             Детали {getChartTypeDescription(chartType)}
           </h3>
-          {/* Close button with circular styling */}
+          {/* Кнопка закрытия с круглым стилем */}
           <button
-            // Click handler for close button
+            // Обработчик кликов для кнопки закрытия
             onClick={onClose}
-            // CSS classes for button styling
+            // Классы CSS для стилизации кнопки
             className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300 bg-transparent hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full p-1 transition-colors duration-200"
-            // Accessibility attributes
+            // Атрибуты доступности
             aria-label="Закрыть"
           >
-            {/* Close icon using SVG */}
+            {/* Иконка закрытия с использованием SVG */}
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
           </button>
         </div>
         
-        {/* Modal body with data point details */}
+        {/* Тело модального окна с деталями точки данных */}
         <div className="p-6">
-          {/* Data point label with emphasis */}
+          {/* Метка точки данных с акцентом */}
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Категория</p>
           <p className="text-xl font-bold text-gray-900 dark:text-white mb-4">{data.label}</p>
           
-          {/* Data point value with formatting */}
+          {/* Значение точки данных с форматированием */}
           <p className="text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Значение</p>
           <div className="flex items-baseline">
-            {/* Formatted value with large text */}
+            {/* Форматированное значение с крупным текстом */}
             <span className="text-3xl font-bold text-gray-900 dark:text-white">
               {formatNumber(data.value)}
             </span>
-            {/* Units indicator */}
+            {/* Индикатор единиц измерения */}
             <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">единиц</span>
           </div>
         </div>
         
-        {/* Modal footer with source information */}
+        {/* Нижняя часть модального окна с информацией об источнике */}
         <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800 rounded-b-xl">
-          {/* Source chart information */}
+          {/* Информация об исходной диаграмме */}
           <p className="text-xs text-gray-500 dark:text-gray-400">
-            {/* Dynamic source text with chart title */}
+            {/* Динамический текст источника с заголовком диаграммы */}
             Источник: <span className="font-medium">{chartTitle}</span>
           </p>
         </div>
@@ -199,5 +199,5 @@ const Modal: React.FC<ModalProps> = ({ data, chartTitle, chartType, onClose }) =
   );
 };
 
-// Export the Modal component as default
+// Экспорт компонента Modal как стандартного
 export default Modal;

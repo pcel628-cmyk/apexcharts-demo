@@ -1,95 +1,95 @@
-// Core module: Strict TypeScript typing for data structures
-// This file defines the fundamental data structures and types
-// used throughout the charting application for type safety
+// Ядро модуля: строгая типизация данных для структур
+// Этот файл определяет фундаментальные структуры данных и типы
+// используемые во всем приложении диаграмм для обеспечения безопасности типов
 
 /**
- * ChartDataPoint Interface - Defines the structure of a single data point
+ * Интерфейс ChartDataPoint - Определяет структуру одной точки данных
  * 
- * This interface represents a single data point in a chart, containing
- * all necessary information for visualization and interaction.
+ * Этот интерфейс представляет одну точку данных в диаграмме, содержащую
+ * всю необходимую информацию для визуализации и взаимодействия.
  * 
- * Properties:
- * - id: Unique identifier for the data point
- * - label: Display name or category for the data point
- * - value: Numeric value for chart plotting
- * - color: Optional color for visual customization
+ * Свойства:
+ * - id: Уникальный идентификатор точки данных
+ * - label: Отображаемое имя или категория точки данных
+ * - value: Числовое значение для построения диаграммы
+ * - color: Необязательный цвет для визуальной настройки
  * 
- * Extensibility:
- * - Additional properties can be added for specific chart types
- * - Comments indicate potential future enhancements
+ * Расширяемость:
+ * - Дополнительные свойства могут быть добавлены для конкретных типов диаграмм
+ * - Комментарии указывают на потенциальные будущие улучшения
  */
 export interface ChartDataPoint {
-  /** Unique identifier for the data point */
+  /** Уникальный идентификатор точки данных */
   id: string;
-  /** Display name or category for the data point */
+  /** Отображаемое имя или категория точки данных */
   label: string;
-  /** Numeric value for chart plotting */
+  /** Числовое значение для построения диаграммы */
   value: number;
-  /** Optional color for visual customization */
+  /** Необязательный цвет для визуальной настройки */
   color?: string;
-  // For linear/bar charts additional properties can be added:
+  // Для линейных/столбчатых диаграмм можно добавить:
   // date?: Date;
   // category?: string;
 }
 
 /**
- * ChartType Type - Union type defining supported chart types
+ * Тип ChartType - Объединенный тип, определяющий поддерживаемые типы диаграмм
  * 
- * This type enumerates all supported chart visualization types
- * that can be rendered by the application.
+ * Этот тип перечисляет все поддерживаемые типы визуализации диаграмм
+ * которые могут быть отображены приложением.
  * 
- * Supported types:
- * - bar: Vertical bar chart
- * - line: Line chart with connected data points
- * - pie: Circular chart divided into sectors
+ * Поддерживаемые типы:
+ * - bar: Вертикальная столбчатая диаграмма
+ * - line: Линейная диаграмма с соединенными точками данных
+ * - pie: Круговая диаграмма, разделенная на секторы
  */
 export type ChartType = 'bar' | 'line' | 'pie';
 
 /**
- * ChartProps Interface - Defines props for chart components
+ * Интерфейс ChartProps - Определяет свойства для компонентов диаграмм
  * 
- * This interface specifies the properties that can be passed
- * to chart components for configuration and customization.
+ * Этот интерфейс определяет свойства, которые могут быть переданы
+ * компонентам диаграмм для настройки и персонализации.
  * 
- * Properties:
- * - data: Array of data points to visualize
- * - type: Chart visualization type
- * - title: Optional chart title
- * - colors: Optional custom color palette
- * - onDataPointClick: Optional click handler callback
- * - animated: Flag to enable/disable animations
- * - showDataLabels: Flag to show/hide data labels
+ * Свойства:
+ * - data: Массив точек данных для визуализации
+ * - type: Тип визуализации диаграммы
+ * - title: Необязательный заголовок диаграммы
+ * - colors: Необязательная пользовательская цветовая палитра
+ * - onDataPointClick: Необязательный обработчик клика
+ * - animated: Флаг для включения/выключения анимаций
+ * - showDataLabels: Флаг для отображения/скрытия меток данных
  */
 export interface ChartProps {
-  /** Data points to visualize */
+  /** Точки данных для визуализации */
   data: ChartDataPoint[];
-  /** Chart visualization type */
+  /** Тип визуализации диаграммы */
   type: ChartType;
-  /** Optional chart title */
+  /** Необязательный заголовок диаграммы */
   title?: string;
-  /** Optional custom color palette */
+  /** Необязательная пользовательская цветовая палитра */
   colors?: string[];
-  /** Optional click handler callback */
+  /** Необязательный обработчик клика */
   onDataPointClick?: (point: ChartDataPoint) => void;
-  /** Flag to enable/disable animations */
+  /** Флаг для включения/выключения анимаций */
   animated?: boolean;
-  /** Flag to show/hide data labels */
+  /** Флаг для отображения/скрытия меток данных */
   showDataLabels?: boolean;
 }
 
-// Sample data for demonstration purposes
-// These datasets provide example data for different chart scenarios
+// Примеры данных для демонстрационных целей
+// Эти наборы данных предоставляют примеры для различных сценариев диаграмм
 
 /**
- * Monthly Sales Data - Sample dataset for time-series bar charts
+ * Данные о продажах по месяцам - Пример набора данных для временных рядов столбчатых диаграмм
  * 
- * This dataset represents sales data across six months,
- * suitable for demonstrating bar chart functionality.
+ * Этот набор данных представляет данные о продажах за шесть месяцев,
+ * подходящий для демонстрации функциональности столбчатой диаграммы.
  * 
- * Data characteristics:
- * - Six data points representing monthly periods
- * - Varying numeric values for visual interest
- * - Descriptive labels for business context
+ * Характеристики данных:
+ * - Шесть точек данных, представляющих месячные периоды
+ * - Различные числовые значения для визуального интереса
+ * - Описательные метки для бизнес-контекста
  */
 export const monthlySalesData: ChartDataPoint[] = [
   { id: '1', label: 'Январь', value: 44000 },
@@ -101,15 +101,15 @@ export const monthlySalesData: ChartDataPoint[] = [
 ];
 
 /**
- * Budget Distribution Data - Sample dataset for pie charts
+ * Данные о распределении бюджета - Пример набора данных для круговых диаграмм
  * 
- * This dataset represents budget allocation across four departments,
- * suitable for demonstrating pie chart functionality.
+ * Этот набор данных представляет распределение бюджета по четырем отделам,
+ * подходящий для демонстрации функциональности круговой диаграммы.
  * 
- * Data characteristics:
- * - Four data points representing departments
- * - Proportional values showing budget distribution
- * - Business-relevant category labels
+ * Характеристики данных:
+ * - Четыре точки данных, представляющие отделы
+ * - Пропорциональные значения, показывающие распределение бюджета
+ * - Метки категорий, актуальные для бизнеса
  */
 export const budgetDistributionData: ChartDataPoint[] = [
   { id: '1', label: 'Маркетинг', value: 44000 },
@@ -119,15 +119,15 @@ export const budgetDistributionData: ChartDataPoint[] = [
 ];
 
 /**
- * User Growth Data - Sample dataset for line charts
+ * Данные о росте пользователей - Пример набора данных для линейных диаграмм
  * 
- * This dataset represents user growth over eight months,
- * suitable for demonstrating line chart functionality.
+ * Этот набор данных представляет рост пользователей за восемь месяцев,
+ * подходящий для демонстрации функциональности линейной диаграммы.
  * 
- * Data characteristics:
- * - Eight data points showing growth trend
- * - Sequential values demonstrating progression
- * - Abbreviated month labels for compact display
+ * Характеристики данных:
+ * - Восемь точек данных, показывающих тенденцию роста
+ * - Последовательные значения, демонстрирующие прогрессию
+ * - Сокращенные метки месяцев для компактного отображения
  */
 export const userGrowthData: ChartDataPoint[] = [
   { id: '1', label: 'Янв', value: 30 },
