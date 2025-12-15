@@ -1,22 +1,52 @@
 "use client";
 
+// Импорт React и хука управления состоянием
 import React, { useState } from 'react';
+
+// Импорт типов данных для TypeScript
 import { ChartDataPoint } from '../types';
 
+/**
+ * Интерфейс свойств компонента редактора данных
+ */
 interface DataEditorProps {
+  /** Исходные данные для редактирования */
   initialData: ChartDataPoint[];
+  /** Функция обратного вызова для обновления данных */
   onDataChange: (newData: ChartDataPoint[]) => void;
+  /** Заголовок редактора */
   title: string;
 }
 
+/**
+ * Компонент редактора данных для диаграмм
+ * Позволяет добавлять, редактировать и удалять данные в реальном времени
+ * 
+ * Особенности:
+ * - Редактирование существующих записей (название, значение, цвет)
+ * - Добавление новых записей с выбором цвета
+ * - Удаление записей
+ * - Автоматическое обновление диаграмм при изменении данных
+ */
 export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChange, title }) => {
+  // Состояние для хранения текущих данных
   const [data, setData] = useState<ChartDataPoint[]>(initialData);
-  const [newItem, setNewItem] = useState<Omit<ChartDataPoint, 'id' | 'color'> & { color?: string }>({ 
+  
+  // Состояние для новой записи данных (без ID и цвета)
+  const [newItem, setNewItem] = useState<Omit<ChartDataPoint, 'id' | 'color'>>({ 
     label: '', 
-    value: 0,
-    color: '#3B82F6' // Цвет по умолчанию из палитры ApexCharts
+    value: 0
   });
+  
+  // Состояние для цвета новой записи
+  const [newItemColor, setNewItemColor] = useState('#3B82F6');
 
+  /**
+   * Обработчик изменения полей существующих записей
+   * @param index - индекс записи в массиве
+   * @param field - поле для изменения
+   * @param value - новое значение
+   */
   const handleInputChange = (index: number, field: keyof ChartDataPoint, value: string | number) => {
     const newData = [...data];
     newData[index] = { ...newData[index], [field]: value };
@@ -24,44 +54,44 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
     onDataChange(newData);
   };
 
-  const handleColorChange = (index: number, color: string) => {
-    const newData = [...data];
-    newData[index] = { ...newData[index], color };
-    setData(newData);
-    onDataChange(newData);
-  };
-
+  /**
+   * Обработчик добавления новой записи
+   * Создает новую запись с уникальным ID и выбранным цветом
+   */
   const handleAddItem = () => {
+    // Проверяем, что название не пустое
     if (newItem.label.trim() === '') return;
     
+    // Создаем новую запись с уникальным ID и выбранным цветом
     const newItemWithId: ChartDataPoint = {
       ...newItem,
       id: `item-${Date.now()}`,
       value: Number(newItem.value) || 0,
-      color: newItem.color || '#3B82F6'
+      color: newItemColor
     };
     
+    // Добавляем новую запись в массив данных
     const newData = [...data, newItemWithId];
     setData(newData);
     onDataChange(newData);
     
-    setNewItem({ label: '', value: 0, color: '#3B82F6' });
+    // Сбрасываем форму новой записи
+    setNewItem({ label: '', value: 0 });
+    setNewItemColor('#3B82F6');
   };
 
+  /**
+   * Обработчик удаления записи
+   * @param index - индекс записи для удаления
+   */
   const handleRemoveItem = (index: number) => {
     const newData = data.filter((_, i) => i !== index);
     setData(newData);
     onDataChange(newData);
   };
 
-  // Предопределённая палитра цветов, совместимая с ApexCharts
-  const colorPalette = [
-    '#3B82F6', '#10B981', '#F59E0B', '#EF4444', 
-    '#8B5CF6', '#EC4899', '#06B6D4', '#8B5CF6',
-    '#F97316', '#6366F1', '#14B8A6', '#F43F5E'
-  ];
-
   return (
+    // Основной контейнер редактора в стиле модального окна
     <div style={{
       position: 'relative',
       backgroundColor: '#ffffff',
@@ -70,6 +100,7 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
       padding: '24px',
       border: '1px solid #bfdbfe'
     }}>
+      {/* Заголовок редактора */}
       <div style={{ 
         display: 'flex', 
         alignItems: 'center', 
@@ -85,26 +116,28 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
         </h3>
       </div>
       
+      {/* Список редактируемых записей с прокруткой */}
       <div style={{ 
-        gap: '16px',
+        gap: '12px',
         maxHeight: '300px',
         overflowY: 'auto',
-        marginBottom: '20px',
-        paddingRight: '8px'
+        marginBottom: '20px'
       }}>
         {data.map((item, index) => (
+          // Контейнер одной записи данных
           <div 
             key={item.id} 
             style={{
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              padding: '16px',
+              padding: '12px',
               backgroundColor: '#f9fafb',
               borderRadius: '8px',
               border: '1px solid #e5e7eb'
             }}
           >
+            {/* Поле ввода названия */}
             <input
               type="text"
               value={item.label}
@@ -120,6 +153,8 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
               }}
               placeholder="Название"
             />
+            
+            {/* Поле ввода значения */}
             <input
               type="number"
               value={item.value}
@@ -136,7 +171,7 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
               placeholder="Значение"
             />
             
-            {/* Выбор цвета - текстовое поле */}
+            {/* Элемент выбора цвета */}
             <input
               type="color"
               value={item.color || '#3B82F6'}
@@ -151,24 +186,7 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
               }}
             />
             
-            {/* Предопределённые цвета */}
-            <div style={{ display: 'flex', gap: '4px' }}>
-              {colorPalette.slice(0, 4).map((color) => (
-                <div
-                  key={color}
-                  onClick={() => handleColorChange(index, color)}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '4px',
-                    backgroundColor: color,
-                    border: item.color === color ? '2px solid #000000' : '1px solid #d1d5db',
-                    cursor: 'pointer'
-                  }}
-                />
-              ))}
-            </div>
-            
+            {/* Кнопка удаления записи */}
             <button
               onClick={() => handleRemoveItem(index)}
               style={{
@@ -194,6 +212,7 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
         ))}
       </div>
 
+      {/* Секция добавления новой записи */}
       <div style={{ 
         paddingTop: '20px', 
         borderTop: '1px solid #e5e7eb' 
@@ -208,11 +227,14 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
         }}>
           Добавить новую запись
         </h4>
+        
+        {/* Форма новой записи */}
         <div style={{ 
           display: 'flex', 
           alignItems: 'center', 
           gap: '12px' 
         }}>
+          {/* Поле ввода названия новой записи */}
           <input
             type="text"
             value={newItem.label}
@@ -228,6 +250,8 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
             }}
             placeholder="Название"
           />
+          
+          {/* Поле ввода значения новой записи */}
           <input
             type="number"
             value={newItem.value || ''}
@@ -244,11 +268,11 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
             placeholder="Значение"
           />
           
-          {/* Выбор цвета для новой записи */}
+          {/* Элемент выбора цвета для новой записи */}
           <input
             type="color"
-            value={newItem.color || '#3B82F6'}
-            onChange={(e) => setNewItem({ ...newItem, color: e.target.value })}
+            value={newItemColor}
+            onChange={(e) => setNewItemColor(e.target.value)}
             style={{
               width: '40px',
               height: '40px',
@@ -259,6 +283,7 @@ export const DataEditor: React.FC<DataEditorProps> = ({ initialData, onDataChang
             }}
           />
           
+          {/* Кнопка добавления новой записи */}
           <button
             onClick={handleAddItem}
             style={{
