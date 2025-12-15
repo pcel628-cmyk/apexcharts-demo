@@ -1,14 +1,8 @@
 {
-  "version": 2,
   "builds": [
     {
       "src": "package.json",
-      "use": "@vercel/next",
-      "config": {
-        "includeFiles": [
-          "next.config.ts"
-        ]
-      }
+      "use": "@vercel/next"
     }
   ],
   "routes": [
@@ -16,9 +10,5 @@
       "src": "/(.*)",
       "dest": "/"
     }
-  ],
-  "buildCommand": "pnpm build",
-  "outputDirectory": ".next",
-  "installCommand": "pnpm install",
-  "nodeVersion": "22.x"
+  ]
 }

@@ -4,6 +4,7 @@ export { BarChart } from './components/BarChart';
 export { LineChart } from './components/LineChart';
 export { PieChart } from './components/PieChart';
 export { ChartWrapper } from './components/ChartWrapper';
+export { DataEditor } from './components/DataEditor';
 
 // ============================ ЭКСПОРТ КОНТЕКСТА ============================
 
@@ -57,6 +58,7 @@ import {
   BarChart, 
   LineChart, 
   PieChart,
+  DataEditor,
   monthlySalesData,
   budgetDistributionData 
 } from '@/demo-charts';

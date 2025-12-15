@@ -1,12 +1,14 @@
+"use client";
+
+import { useState } from 'react';
 import { ChartWrapper, SelectionProvider } from '../demo-charts';
 import { generateDemoData } from '../demo-charts';
+import { DataEditor } from '../demo-charts/components/DataEditor';
+import { ChartDataPoint } from '../demo-charts/types';
 
 export default function Home() {
-  // Используем единый набор данных для всех диаграмм, чтобы сравнение было корректным
-  const baseData = generateDemoData(5);
-  const barData = baseData;
-  const lineData = baseData;
-  const pieData = baseData;
+  // Используем состояние для общих данных для всех диаграмм
+  const [sharedData, setSharedData] = useState<ChartDataPoint[]>(generateDemoData(5));
 
   return (
     <SelectionProvider>
@@ -18,21 +20,37 @@ export default function Home() {
           </div>
         </header>
 
-        <main className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-          <figure>
-            <ChartWrapper data={barData} type="bar" title="Продажи по категориям" />
-            <figcaption className="mt-2 text-sm text-[var(--text-secondary)]">Столбчатая диаграмма — показывает абсолютные продажи по категориям</figcaption>
-          </figure>
+        <main className="max-w-7xl mx-auto px-6 py-12">
+          {/* Панель редактирования данных */}
+          <div className="mb-12">
+            <h2 className="text-xl font-semibold mb-6 text-[var(--foreground)]">Редактирование данных</h2>
+            <div className="max-w-3xl mx-auto">
+              <DataEditor 
+                initialData={sharedData} 
+                onDataChange={setSharedData} 
+                title="Общие данные для всех диаграмм" 
+              />
+            </div>
+          </div>
 
-          <figure>
-            <ChartWrapper data={lineData} type="line" title="Динамика продаж" />
-            <figcaption className="mt-2 text-sm text-[var(--text-secondary)]">Линейная диаграмма — показывает изменение значений по порядку (например, по времени)</figcaption>
-          </figure>
+          {/* Диаграммы */}
+          <h2 className="text-xl font-semibold mb-6 text-[var(--foreground)]">Диаграммы</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            <figure>
+              <ChartWrapper data={sharedData} type="bar" title="Продажи по категориям" />
+              <figcaption className="mt-2 text-sm text-[var(--text-secondary)]">Столбчатая диаграмма — показывает абсолютные продажи по категориям</figcaption>
+            </figure>
 
-          <figure>
-            <ChartWrapper data={pieData} type="pie" title="Доля по категориям" showDataLabels={false} />
-            <figcaption className="mt-2 text-sm text-[var(--text-secondary)]">Круговая диаграмма — показывает вклад каждой категории в общий объём (в процентах)</figcaption>
-          </figure>
+            <figure>
+              <ChartWrapper data={sharedData} type="line" title="Динамика продаж" />
+              <figcaption className="mt-2 text-sm text-[var(--text-secondary)]">Линейная диаграмма — показывает изменение значений по порядку (например, по времени)</figcaption>
+            </figure>
+
+            <figure>
+              <ChartWrapper data={sharedData} type="pie" title="Доля по категориям" showDataLabels={false} />
+              <figcaption className="mt-2 text-sm text-[var(--text-secondary)]">Круговая диаграмма — показывает вклад каждой категории в общий объём (в процентах)</figcaption>
+            </figure>
+          </div>
         </main>
 
         <footer className="border-t border-[var(--border)] bg-white bg-opacity-30 mt-12">
