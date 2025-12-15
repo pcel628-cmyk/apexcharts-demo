@@ -1,26 +1,17 @@
 "use client";
 
 import React, { useState, useMemo, useCallback, useRef, useEffect } from 'react';
-import dynamic from 'next/dynamic';
 import { ChartProps, ChartDataPoint } from '../types';
 import { transformToApexFormat } from '../lib/transformData';
 import { createChartOptions } from '../config/chartOptions';
 import { useSelection } from '../context/SelectionContext';
 import Modal from './Modal';
 
-// Динамический импорт ApexCharts (оптимизация загрузки)
-const ApexChart = dynamic(
-  () => import('react-apexcharts').then((mod) => mod.default),
-  { 
-    ssr: false,
-    loading: () => (
-      <div className="p-8 text-center text-gray-500 animate-pulse">
-        <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
-        <p className="mt-2">Загрузка графика...</p>
-      </div>
-    )
-  }
-);
+// Условный импорт ApexCharts только на клиенте
+let ApexCharts: any;
+if (typeof window !== 'undefined') {
+  ApexCharts = require('react-apexcharts').default;
+}
 
 export const ChartWrapper: React.FC<ChartProps> = ({
   data,
@@ -155,13 +146,21 @@ export const ChartWrapper: React.FC<ChartProps> = ({
       }`}
       >
         <div className={type === 'pie' ? 'max-w-md mx-auto' : ''}>
-          <ApexChart
-            options={options}
-            series={type === 'pie' ? series : [{ name: title, data: series }]}
-            type={type}
-            height={type === 'pie' ? 400 : 350}
-            width="100%"
-          />
+          {/* Показываем загрузку, если ApexCharts еще не загружен */}
+          {!ApexCharts ? (
+            <div className="p-8 text-center text-gray-500 animate-pulse">
+              <div className="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+              <p className="mt-2">Загрузка графика...</p>
+            </div>
+          ) : (
+            <ApexCharts
+              options={options}
+              series={type === 'pie' ? series : [{ name: title, data: series }]}
+              type={type}
+              height={type === 'pie' ? 400 : 350}
+              width="100%"
+            />
+          )}
         </div>
         
         {/* Индикатор синхронизации из другого графика - при клике */}
